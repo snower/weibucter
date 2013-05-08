@@ -1,0 +1,56 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+class Jokeji_Data extends CI_Model{
+	const TABLE_NAME="jokeji_data";
+	public $id;
+	public $url_id;
+	public $url;
+	public $joke_id;
+	public $joke;
+	public $create_time;
+	
+	public function addJoke($url,$joke){
+		$this->url_id=md5($url);
+		$this->url=$url;
+		$this->joke_id=md5($joke);
+		$this->joke=$joke;
+		$this->create_time=time();
+		
+		$this->db->set("url_id",$this->url_id);
+		$this->db->set("url",$this->url);
+		$this->db->set("joke_id",$this->joke_id);
+		$this->db->set("joke",$this->joke);
+		$this->db->set("create_time",$this->create_time);
+		
+		$this->db->insert(self::TABLE_NAME);
+		$this->id=$this->db->insert_id();
+		return $this->id;
+	}
+	
+	public function getJokeById($id){
+		$this->db->where("id",$id);
+		$query=$this->db->get(self::TABLE_NAME);
+		
+		if($query->num_rows() == 0) return false;
+		$result=$query->result();
+		foreach ($result[0] as $k=>$v){
+			$this->$k=$v;
+		}
+		return $result;
+	}
+	
+	public function getJokeByJokeId($joke_id){
+		$this->db->where("joke_id",$joke_id);
+		$query=$this->db->get(self::TABLE_NAME);
+	
+		if($query->num_rows() == 0) return false;
+		$result=$query->result();
+		foreach ($result[0] as $k=>$v){
+			$this->$k=$v;
+		}
+		return $result;
+	}
+	
+	public function deleteData($name){
+		
+	}
+}

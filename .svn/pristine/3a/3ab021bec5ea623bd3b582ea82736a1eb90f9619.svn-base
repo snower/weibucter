@@ -1,0 +1,34 @@
+<?php
+require_once APPPATH."libraries/bucter/BT_topic.php";
+
+class TO_joke extends BT_topic{
+	private $jokeji;
+	
+	private function loadJokeji(){
+		$this->jokeji=$this->loadModel("jokeji_data");
+	}
+	
+	private function getOneRandomJoke(){
+		$offset=rand(0, $this->jokeji->count());
+		$joke=$this->jokeji->getJokeByOffset($offset);
+		if($joke){
+			return $joke[0];
+		}
+		return null;
+	}
+	
+	public function getReply(){
+		$this->loadJokeji();
+		$joke=$this->getOneRandomJoke();
+		if($joke){
+			$this->msg["Content"]=$joke->joke."\r\n\r\n来自：".$joke->url;
+			return true;
+		}
+		$this->msg["Content"]="谢谢关注北化人，北化人致力于打造北化人自己的微信公共平台，欢迎大家参与!";
+		return false;
+	}
+	
+	public function saveTopic(){
+		return false;
+	}
+}

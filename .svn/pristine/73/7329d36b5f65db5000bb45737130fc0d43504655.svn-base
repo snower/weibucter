@@ -1,0 +1,36 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class WX_sign{
+	const TOKEN="bucter_weixin";
+	private $error;
+	private $signature;
+	private $timestamp;
+	private $nonce;
+	private $echostr;
+	public function __construct($params){
+		$this->signature=$params["signature"];
+		$this->timestamp=$params["timestamp"];
+		$this->nonce=$params["nonce"];
+		$this->echostr=$params["echostr"];
+		$this->error= $this->signature && $this->timestamp && $this->nonce && $this->echostr;
+	}
+	
+	public function valid(){
+		if(!$this->error) return "access denied";
+		return $this->checkSignature() ? $this->echostr : "access denied";
+	}
+	
+	private function checkSignature(){
+		$tmpArr = array(self::TOKEN, $this->timestamp, $this->nonce);
+		sort($tmpArr);
+		$tmpStr = implode( $tmpArr );
+		$tmpStr = sha1( $tmpStr );
+		
+		if( $tmpStr == $this->signature ){
+			return true;
+		}else{
+			return false;
+		}
+	}
+}
+?>

@@ -1,0 +1,41 @@
+@charset "utf-8";
+/* CSS Document */
+
+.banner{
+	margin-top:70px;
+}
+
+.banner_text{
+	margin-top:30px;
+}
+
+.qrcode_notice{
+	font-size:10px;
+	display:block;
+	text-align:center;
+}
+
+.item{
+	margin-top:20px;
+}
+
+.item_image{
+}
+
+.example_image{
+	cursor:pointer;
+	cursor:url(/static/img/big.cur) auto !important;
+}
+
+.item_text{
+	margin-top:20px;
+}
+
+.topic_list{
+	margin-left:100px;
+}
+
+footer{
+	padding-top:40px;
+}
+

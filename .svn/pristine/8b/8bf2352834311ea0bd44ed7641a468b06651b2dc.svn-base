@@ -1,0 +1,23 @@
+<?php
+require_once "BT_base.php";
+require_once 'BT_text.php';
+
+class BT_bucter extends BT_base{
+	public function getReply(&$msg){
+		switch($msg["MsgType"]){
+			case "text":
+				$text=new BT_text();
+				$text->handle($msg);
+				break;
+			case "image":
+				break;
+			default:
+				$msg["Content"]="谢谢关注北化人，北化人致力于打造北化人自己的微信公共平台，欢迎大家参与!";
+		}
+		$msg["CreateTime"]=time();
+		$name=$msg["FromUserName"];
+		$msg["FromUserName"]=$msg["ToUserName"];
+		$msg["ToUserName"]=$name;
+		return $msg;
+	}
+}

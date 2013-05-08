@@ -1,0 +1,11 @@
+<?php
+
+function getTopicsConfig(){
+	$BT_topics_config=array();
+
+	$BT_topics_config["菜单"]=array(
+		"TO_menu"
+	);
+	
+	return $BT_topics_config;
+}

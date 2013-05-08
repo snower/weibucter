@@ -1,0 +1,47 @@
+<?php
+
+class WX_output{
+	const TEXT_MSG_TEMPLATE="<xml>
+							<ToUserName><![CDATA[%s]]></ToUserName>
+							<FromUserName><![CDATA[%s]]></FromUserName>
+							<CreateTime>%s</CreateTime>
+							<MsgType><![CDATA[%s]]></MsgType>
+							<Content><![CDATA[%s]]></Content>
+							<FuncFlag>0</FuncFlag>
+							</xml>";
+	
+	const NEWS_MSG_TEMPLATE="<xml>
+ 							<ToUserName><![CDATA[%s]]></ToUserName>
+ 							<FromUserName><![CDATA[%s]]></FromUserName>
+ 							<CreateTime>%s</CreateTime>
+							<MsgType><![CDATA[%s]]></MsgType>
+ 							<ArticleCount>%s</ArticleCount>
+ 							<Articles>%s</Articles>
+ 							<FuncFlag>0</FuncFlag>
+ 							</xml>";
+	
+	const NEWS_MSG_ARTICLE_TEMPLATE="
+									<item>
+ 									<Title><![CDATA[%s]]></Title> 
+ 									<Description><![CDATA[%s]]></Description>
+									<PicUrl><![CDATA[%s]]></PicUrl>
+ 									<Url><![CDATA[%s]]></Url>
+ 									</item>
+			";
+	
+	private function text($msg){
+		return sprintf(self::TEXT_MSG_TEMPLATE, $msg["ToUserName"], $msg["FromUserName"], $msg["CreateTime"], $msg["MsgType"], $msg["Content"]);
+	}
+	
+	private function news($msg){
+		$items="";
+		foreach ($msg["Content"] as $item){
+			$items=$items.sprintf(self::NEWS_MSG_ARTICLE_TEMPLATE,$item["Title"],$item["Description"],$item["PicUrl"],$item["Url"]);
+		}
+		return sprintf(self::NEWS_MSG_TEMPLATE,$msg["ToUserName"], $msg["FromUserName"], $msg["CreateTime"], $msg["MsgType"],$msg["ArticleCount"],$items);
+	}
+	  
+	public function output($msg){
+		return $this->$msg["MsgType"]($msg);
+	}
+}

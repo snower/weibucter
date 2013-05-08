@@ -1,0 +1,18 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class datafinder extends CI_Controller {
+	public function start(){
+		$this->load->library("datafinder/DF_dataFinder","","datafinder");
+		$this->datafinder->start();
+	}
+	
+	public function finder(){
+		$this->load->library("datafinder/DF_dataFinder","","datafinder");
+		$finder_name=$this->input->post("finder_name");
+		$this->datafinder->finder($finder_name);
+	}
+	
+	public function error(){
+		
+	}
+}

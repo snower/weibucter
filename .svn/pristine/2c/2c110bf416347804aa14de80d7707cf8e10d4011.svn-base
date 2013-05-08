@@ -1,0 +1,31 @@
+<?php
+require_once APPPATH."libraries/mibot/MB_data.php";
+
+class DT_jokeji extends MB_data{
+	public function __construct(){
+		parent::__construct();
+		
+		$this->model=$this->loadModel("jokeji_data");
+	}
+	
+	public function save($data){
+		if(is_array($data)){
+			foreach ($data as $d){
+				if(!in_array($d["joke"], $this->cache)){
+					$this->cache[]=$d;
+				}
+			}
+		}
+		else{
+			if(!in_array($data["joke"], $this->cache)){
+				$this->cache[]=$data;
+			}
+		}
+	}
+	
+	protected function addData($data){
+		if(!$this->model->getJokeByJokeId(md5($data["joke"]))){
+			$this->model->addJoke($data["url"],$data["joke"]);
+		}
+	}
+}

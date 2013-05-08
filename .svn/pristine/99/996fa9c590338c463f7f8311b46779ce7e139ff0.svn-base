@@ -1,0 +1,8 @@
+<?php
+class BT_bucter{
+	public function getReply($msg){
+		$msg->Content="谢谢关注北化人，北化人致力于打造北化人自己的微信公共平台，欢迎大家参与!";
+		$msg->Time=time();
+		return $msg;
+	}
+}

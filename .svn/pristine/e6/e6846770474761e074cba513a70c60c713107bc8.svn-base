@@ -1,0 +1,46 @@
+<?php
+require_once "BT_base.php";
+
+class BT_event extends BT_base{
+	private function addMsgUser($msg){
+		return $this->weixin_user->addWeixinUser(array("wx_name"=>$msg["FromUserName"], "wx_msg_count"=>0,"wx_create_time"=>$msg["CreateTime"],"wx_update_time"=>$msg["CreateTime"]));
+	}
+	
+	private function getConfig($topic){
+		require_once 'BT_config.php';
+		$BT_topics_config=getTopicsConfig();
+		if(array_key_exists($topic, $BT_topics_config)){
+			$config=array_values($BT_topics_config[$topic]);
+			$config[]="TO_latestTopic";
+			return $config;
+		}
+		return array("TO_latestTopic");
+	}
+	
+	private function topic(&$msg){
+		require_once 'BT_topic.php';
+		$topic=new BT_topic();
+		$topic->setConfig($msg,$this->getConfig($msg["Topic"]));
+		return $topic->getReply();
+	}
+		
+	private function subscribe(&$msg){
+		$weixin_user=$this->loadModel("Weixin_User");
+		$user_id=$this->weixin_user->getUserByName($msg["FromUserName"]);
+		if(!$user_id){
+			$user_id=$this->addMsgUser($msg);
+		}
+		$msg["TopicType"]="topic";
+		$msg["Topic"]="欢迎关注";
+		$msg["TopicContent"]="";
+		$this->topic($msg);
+	}
+	
+	private function unsubscribe(&$msg){
+		
+	}
+	
+	public function handle(&$msg){
+		$this->$msg['Event']($msg);
+	}
+}

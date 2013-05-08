@@ -1,0 +1,60 @@
+<?php
+require_once "BT_base.php";
+
+class BT_text extends BT_base{
+	private function parseType(&$msg){
+		$content=$msg["Content"];
+		$content=str_replace("＃","#",$content);
+		$result=array();
+		if(preg_match("/^#(.+?)#(.*)$/",$content,$result)){
+			$msg["TopicType"]="topicAdd";
+			$msg["Topic"]=$result[1];
+			$msg["TopicContent"]=$result[2];
+		}
+		else{
+			preg_match("/^(.+?)(\s.*$|$)/",$content,$result);
+			$msg["TopicType"]="topic";
+			$msg["Topic"]=$result[1];
+			$msg["TopicContent"]=$result[2];
+		}
+	}
+	
+	private function addMsg($msg){
+		require_once 'BT_msg.php';
+		$m=new BT_msg();
+		$m->saveMsg($msg);
+	}
+	
+	private function getConfig($topic){
+		require_once 'BT_config.php';
+		$BT_topics_config=getTopicsConfig();
+		if(array_key_exists($topic, $BT_topics_config)){
+			$config=array_values($BT_topics_config[$topic]);
+			$config[]="TO_latestTopic";
+			return $config;
+		}
+		return array("TO_latestTopic");
+	}
+	
+	private function topicAdd(&$msg){
+		require_once 'BT_topic.php';
+		$topic=new BT_topic();
+		$topic->setConfig($msg,$this->getConfig($msg["Topic"]));
+		$topic->saveTopic();
+		return $topic->getReply();
+	}
+	
+	private function topic(&$msg){
+		require_once 'BT_topic.php';
+		$topic=new BT_topic();
+		$topic->setConfig($msg,$this->getConfig($msg["Topic"]));
+		return $topic->getReply();
+	}
+	
+	public function handle(&$msg){
+		$this->addMsg($msg);
+		
+		$this->parseType($msg);
+		$this->$msg["TopicType"]($msg);
+	}
+}

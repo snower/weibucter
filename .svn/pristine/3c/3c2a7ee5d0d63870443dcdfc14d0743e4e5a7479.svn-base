@@ -1,0 +1,11 @@
+name: sae
+version: 1
+handle:
+- directoryindex: index.html
+- expire: .jpg modify 10 years
+- expire: .swf modify 10 years
+- expire: .png modify 10 years
+- expire: .gif modify 10 years
+- expire: .JPG modify 10 years
+- expire: .ico modify 10 years
+- rewrite:  if ( !is_dir() && !is_file() && path ~ "(.*)" ) goto "index.php/$1"

@@ -1,0 +1,11 @@
+name: weibucter
+version: 1
+handle:
+- rewrite:  if ( !is_dir() && !is_file() && path ~ "^(.*)$" ) goto "/index.php/$1"
+
+cron:
+    - description:data_finder
+	  url: /datafinder/start
+	  schedule: every 60 mins
+	  timezone: Beijing
+

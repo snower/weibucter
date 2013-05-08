@@ -1,0 +1,33 @@
+<?php
+require_once APPPATH."libraries/bucter/BT_topic.php";
+
+class TO_latestTopic extends BT_topic{
+	public function getReply(){
+		$topic=$this->loadModel("Topic");
+		$topic_content=$this->loadModel("Topic_Content");
+		$topic_id=$topic->getTopicByName($this->type["topic"]);
+		if(!$topic_id){
+			$topic->addTopic(array("name"=>$this->type["topic"],"parent"=>0,"content_count"=>0,"create_time"=>$this->type["create_time"],"update_time"=>$this->type["create_time"]));
+		}
+		$tcs=$topic_content->getLatestTopicContentByTopicId($topic->id);
+		$r="";
+		$i=0;
+		foreach ($tcs as $v){
+			$i++;
+			$r=$r.$i.":".$v->content."\r\n";
+		}
+		return $r;
+	}
+	
+	public function saveTopic(){
+		$topic=$this->loadModel("Topic");
+		$weixin_user=$this->loadModel("Weixin_User");
+		$topic_content=$this->loadModel("Topic_Content");
+		$topic_id=$topic->getTopicByName($this->type["topic"]);
+		if(!$topic_id){
+			$topic->addTopic(array("name"=>$this->type["topic"],"parent"=>0,"content_count"=>0,"create_time"=>$this->type["create_time"],"update_time"=>$this->type["create_time"]));
+		}
+		$weixin_user->getUserByName($this->type["from_user_name"]);
+		return $topic_content->addTopicContent(array("topic_id"=>$topic->id,"user_id"=>$weixin_user->id,"content"=>$this->type["content"],"create_time"=>$this->type["create_time"]));
+	}
+}

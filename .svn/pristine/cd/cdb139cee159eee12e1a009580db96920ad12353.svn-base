@@ -1,0 +1,16 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class WX_output{
+	const TEXT_MSG_TEMPLATE="<xml>
+							<ToUserName><![CDATA[%s]]></ToUserName>
+							<FromUserName><![CDATA[%s]]></FromUserName>
+							<CreateTime>%s</CreateTime>
+							<MsgType><![CDATA[%s]]></MsgType>
+							<Content><![CDATA[%s]]></Content>
+							<FuncFlag>0</FuncFlag>
+							</xml>";
+	  
+	public function output($msg){
+		return sprintf(self::TEXT_MSG_TEMPLATE, $msg["ToUserName"], $msg["FromUserName"], $msg["CreateTime"], $msg["MsgType"], $msg["Content"]);
+	}
+}

@@ -1,0 +1,35 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Weixin extends CI_Controller {
+	public function index(){
+		switch ($this->input->server("REQUEST_METHOD")){
+			case "GET":
+				$this->sign();
+				break;
+			case "POST":
+				$this->msg();
+				break;
+			default:
+				$this->sign();
+		}
+	}
+	
+	public function sign()
+	{
+		$this->load->library("weixin/WX_sign",array(
+				"signature"=>$this->input->get("signature"),
+				"timestamp"=>$this->input->get("timestamp"),
+				"nonce"=>$this->input->get("nonce"),
+				"echostr"=>$this->input->get("echostr")
+		),"weixin_sign");
+		$this->output->set_output($this->weixin_sign->valid());
+	}
+	
+	public function msg(){
+		$msg_xml=file_get_contents("php://input");
+		$this->load->library("weixin/WX_weixin",'',"weixin");
+		$this->output->set_content_type('text/xml');
+        $this->output->set_output($this->weixin->msg($msg_xml));
+	}
+}
+?>

@@ -1,0 +1,52 @@
+<?php
+require_once APPPATH."libraries/bucter/BT_topic.php";
+
+class TO_latestTopic extends BT_topic{
+	private function getOutputString($topics){
+		$r="";
+		foreach ($topics as $v){
+			$r=$r.$v->content."\r\n\r\n";
+		}
+		return $r;
+	}
+	
+	private function getLatest($topic,$topic_content){
+		$tcs=$topic_content->getLatestTopicContent();
+		if($tcs){
+			$r="未找到话题！\r\n最新讨论：\r\n\r\n";
+			foreach ($tcs as $tc){
+				$name=$topic->getTopicById($tc->topic_id);
+				if($name){
+					$r=$r."#".$name[0]->name."#: ".$tc->content."\r\n\r\n";
+				}
+			}
+			return $r;
+		}
+		return "谢谢关注北化人，北化人致力于打造北化人自己的微信公共平台，欢迎大家参与!";
+	}
+	
+	public function getReply(){
+		$topic=$this->loadModel("Topic");
+		$topic_content=$this->loadModel("Topic_Content");
+		$topic_id=$topic->getTopicByName($this->msg["Topic"]);
+		$tcs=false;
+		if($topic_id){
+			$tcs=$topic_content->getLatestTopicContent($topic->id);
+		}
+		$this->msg["Content"]=$tcs ? $this->getOutputString($tcs) : $this->getLatest($topic,$topic_content);
+	}
+	
+	public function saveTopic(){
+		$topic=$this->loadModel("Topic");
+		$weixin_user=$this->loadModel("Weixin_User");
+		$topic_content=$this->loadModel("Topic_Content");
+		$topic_id=$topic->getTopicByName($this->msg["Topic"]);
+		if(!$topic_id){
+			$topic->addTopic(array("name"=>$this->msg["Topic"],"parent"=>0,"content_count"=>0,"create_time"=>$this->msg["CreateTime"],"update_time"=>$this->msg["CreateTime"]));
+		}
+		$weixin_user->getUserByName($this->msg["FromUserName"]);
+		$topic_content->addTopicContent(array("topic_id"=>$topic->id,"user_id"=>$weixin_user->id,"content"=>$this->msg["TopicContent"],"create_time"=>$this->msg["CreateTime"]));
+		$topic->updateTopicById($topic->id,array("content_count"=>$topic->content_count+=1,"update_time"=>$this->msg["CreateTime"]));
+		return $topic_content->id;
+	}
+}

@@ -1,0 +1,55 @@
+<?php
+
+class BT_config{
+	private static $instance=null;
+	private $msg_handle_config=array(
+			"text"=>"BT_text",
+			"image"=>"BT_image",
+			"event"=>"BT_event"
+	);
+	
+	private $text_msg_parse_config=array(
+			"^#(.+?)#(.*)$"=>"TM_addTopic",
+			"^(.+?)(\s.*$|$)"=>"TM_topic"
+	);
+	
+	private $topics_config=array(
+			"菜单"=>array(
+				"TO_menu"
+			),
+			"使用说明"=>array(
+				"TO_readme"
+			),
+			"欢迎关注"=>array(
+				"TO_welcome"
+			),
+			"话题"=>array(
+				"TO_topicList"
+			),
+			"花样年华"=>array(
+				"TO_hynh"
+			),
+			".+"=>array(
+				"TO_latestTopic"
+			)
+	);
+	
+	public static function getInstance(){
+		if(!self::$instance){
+			self::$instance=new BT_config();
+		}
+		return self::$instance;
+	}
+	
+	public function getMsgHandleConfig(){
+		return $this->msg_handle_config;
+	}
+	
+	public function getTextMsgParseConfig(){
+		return $this->text_msg_parse_config;
+	}
+	
+	public function getTopicsConfig(){
+		return $this->topics_config;
+	}
+}

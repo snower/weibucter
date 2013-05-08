@@ -1,0 +1,36 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once "BT_base.php";
+require_once 'msghandle/BT_text.php';
+require_once "msghandle/BT_image.php";
+require_once "msghandle/BT_event.php";
+
+class BT_bucter extends BT_base{
+	private function loadHandle($name){
+		if(file_exists(APPPATH."libraries/bucter/msghandle/".$name.".php")){
+			require_once APPPATH."libraries/bucter/msghandle/".$name.".php";
+			return new $name();
+		}
+		return false;
+	}
+	
+	public function getReply(&$msg){
+		$config=$this->loadConfig()->getMsgHandleConfig();
+		if(array_key_exists($msg["MsgType"],$config)){
+			$handle=$this->loadHandle($config[$msg["MsgType"]]);
+			if($handle){
+				$handle->handle($msg);
+			}
+			else{
+				$msg["Content"]="谢谢关注北化人，北化人致力于打造北化人自己的微信公共平台，欢迎大家参与!";
+			}
+		}
+		else{
+			$msg["Content"]="谢谢关注北化人，北化人致力于打造北化人自己的微信公共平台，欢迎大家参与!";
+		}
+		$msg["CreateTime"]=time();
+		$name=$msg["FromUserName"];
+		$msg["FromUserName"]=$msg["ToUserName"];
+		$msg["ToUserName"]=$name;
+		return $msg;
+	}
+}

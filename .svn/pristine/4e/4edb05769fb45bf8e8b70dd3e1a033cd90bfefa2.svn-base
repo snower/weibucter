@@ -1,0 +1,73 @@
+<?php
+require_once 'MB_base.php';
+
+class MB_urls extends MB_base{
+	protected $config;
+	protected $model;
+	protected $load_cache=array();
+	protected $store_cache=array();
+	
+	public function __construct(){
+		parent::__construct();
+	}
+	
+	public function load(){
+		$urls=$this->model->getNoFinishUrls();
+		if($urls){
+			foreach ($urls as $url){
+				array_push($this->load_cache, $url->url);
+			}
+		}
+	}
+	
+	public function getOneUrl(){
+		if($this->load_cache){
+			return array_pop($this->load_cache);
+		}
+		return false;
+	}
+	
+	public function addStartUrl($url){
+		array_push($this->load_cache, $url);
+	}
+	
+	public function setContentOfUrl($url,$content){
+		$url_id=md5($url);
+		$this->model->setContent($url_id,$content);
+	}
+	
+	public function setFinishOfUrl($url){
+		$url_id=md5($url);
+		$this->model->setStatus($url_id,2);
+	}
+	
+	public function addUrl($url){
+		if(!in_array($url, $this->store_cache)){
+			array_push($this->store_cache, $url);
+		}
+	}
+	
+	public function store(){
+		foreach ($this->store_cache as $url){
+			$url_id=md5($url);
+			if(!$this->model->getUrlByUrlId($url_id)){
+				$this->model->addUrl($url);
+			}
+		}
+		$this->store_cache=array();
+	}
+	
+	public function setConfig(&$config){
+		$this->config=$config;
+	}
+	
+	public function serialize(){
+		return serialize(array($this->load_cache,$this->store_cache));
+	}
+	
+	public function unserialize($str){
+		$s=unserialize($str);
+		$this->load_cache=$s[0];
+		$this->store_cache=$s[1];
+	}
+}

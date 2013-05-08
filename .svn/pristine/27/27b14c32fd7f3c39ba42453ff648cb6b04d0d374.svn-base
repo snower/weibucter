@@ -1,0 +1,64 @@
+<?php
+class MB_config{
+	private static $instance=null;
+	private $default_task_config=array(
+			"start_urls"=>array(),
+			"match_urls"=>array(),
+			"match_data"=>array(),
+			"urls"=>"",
+			"data"=>"",
+			"parse"=>"",
+			"prior"=>"lbs", //lbs or wbs
+			"cache_count"=>50
+	);
+	private $tasks_config=array(
+			"jokeji"=>array(
+					"start_urls"=>array(
+						"http://www.jokeji.cn/"
+					),
+					"match_urls"=>array(
+							"^http:\/\/www\.jokeji\.cn\/list\d+?_\d+?\.htm$",
+							"^http:\/\/www\.jokeji\.cn\/jokehtml\/.+?\/\d+?\.htm$"
+					),
+					"urls"=>"UR_jokeji",
+					"data"=>"DT_jokeji",
+					"parse"=>"PS_jokeji"
+			)
+	);
+	
+	public function __construct(){
+		$this->defaultMapToConfig();
+	}
+	
+	public static function getInstance(){
+		if(!self::$instance){
+			self::$instance=new MB_config();
+		}
+		return self::$instance;
+	}
+	
+	private function defaultMapToConfig(){
+		foreach ($this->tasks_config as $cn=>$config){
+			foreach ($this->default_task_config as $dn =>$dv){
+				if(!array_key_exists($dn, $config)){
+					$this->tasks_config[$cn][$dn]=$dv;
+				}
+			}
+		}
+	}
+	
+	public function getDefaultTaskConfig(){
+		return $this->default_task_config;
+	}
+	
+	public function getTasksConfig(){
+		return $this->tasks_config;
+	}
+	
+	public function getTaskConfig($name){
+		if(array_key_exists($name, $this->tasks_config)){
+			return $this->tasks_config[$name];
+		}
+		return false;
+	}
+}

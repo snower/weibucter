@@ -1,0 +1,28 @@
+<?php
+require_once APPPATH."libraries/datafinder/DF_finder.php";
+
+class FD_hynh extends DF_finder{
+	private function getPageSource(){
+		$f = new SaeFetchurl();
+		return $f->fetch('http://www.student.buct.edu.cn/forum/index.aspx');
+	}
+	
+	private function parseLatestPosts(){
+		$content=$this->getPageSource();
+		$reg="/ul_hot_topics.*?ul/ims";
+		$posts=array();
+		if(preg_match($reg,$content,$posts)){
+			$reg="/title=\"(.+?)\".+?href=\"(.+?)\"/ims";
+			if(preg_match_all($reg,$posts[0],$posts)){
+				return array($posts[1],$posts[2]);
+			}
+		}
+	}
+	
+	public function finder(){
+		$this->data=$this->parseLatestPosts();
+		if($this->data){
+			$this->saveData();
+		}
+	}
+}

@@ -1,0 +1,17 @@
+<?php
+require_once APPPATH."libraries/bucter/BT_topic.php";
+
+class TO_menu extends BT_topic{
+	const MENU_TEXT="
+			菜单：获取所有菜单列表
+			使用说明：获取使用说明
+			话题：获取最热话题列表
+			";
+	public function getReply($index){
+		$this->msg["Content"]=self::MENU_TEXT;
+	}
+	
+	public function saveTopic($index){
+		return false;
+	}
+}

@@ -1,0 +1,38 @@
+<?php
+require_once APPPATH."libraries/mibot/MB_parse.php";
+
+class Ps_jokeji extends MB_parse{
+	private function isJokeDetailPage($url){
+		return preg_match("/http:\/\/www\.jokeji\.cn\/JokeHtml\/.+?\/\d+?\.htm/i", $url);
+	}
+	
+	protected function loadSourcePage($url){
+		$f = new SaeFetchurl();
+		$content=mb_convert_encoding($f->fetch($url),"utf-8","gb2312");
+		if($content){
+			$this->urls->setContentOfUrl($url,$content);
+		}
+		return $content;
+	}
+	
+	protected function findAllData($url,$content){
+		if(!$this->isJokeDetailPage($url)) return array();
+		$dataes=array();
+		$result=array();
+		if(preg_match("/<span id=\"text110\">(.+?)<\/span>/ims", $content,$result)){
+			$jokes=array();
+		 	if(preg_match_all("/<P>(.+?)<\/P>/ims", $result[1], $jokes)){
+		 		foreach ($jokes[1] as $joke){
+		 			$joke=preg_replace("/<.+?>/ims", "", $joke);
+		 			$joke=trim(html_entity_decode($joke));
+		 			$dataes[]=array("url"=>$url,"joke"=>$joke);
+		 		}
+		 	}
+		 	else{
+		 		$joke=preg_replace("/<.+?>/ims", "",$jokes[1]);
+		 		$dataes[]=array("url"=>$url,"joke"=>trim(html_entity_decode($joke)));
+		 	}
+		}
+		return $dataes;
+	}
+}

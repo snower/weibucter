@@ -1,0 +1,33 @@
+<?php
+class DF_finder{
+	protected  $load;
+	protected $name;
+	protected $data;
+	
+	public function __construct(){
+		$this->load=&get_instance();
+	}
+	
+	protected function loadLibrary($name,$config){
+	
+	}
+	
+	protected function loadModel($name){
+		$this->load->load->model($name,"",TRUE);
+		return $this->load->$name;
+	}
+	
+	function finder(){
+		
+	}
+	
+	protected function saveData(){
+		$data_finder=$this->loadModel("data_finder");
+		if($data_finder->getData($this->name)){
+			$data_finder->updateData($this->name,$this->data);
+		}
+		else{
+			$data_finder->addData($this->name,$this->data);
+		}
+	}
+}

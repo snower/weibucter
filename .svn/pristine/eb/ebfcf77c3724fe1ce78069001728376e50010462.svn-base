@@ -1,0 +1,12 @@
+<?php
+require_once APPPATH."libraries/bucter/BT_topic.php";
+
+class TO_readme extends BT_topic{
+	public function getReply(){
+		$this->msg["Content"]="欢迎关注北化人微信公共平台！";
+	}
+
+	public function saveTopic(){
+		return false;
+	}
+}

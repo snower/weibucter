@@ -1,0 +1,91 @@
+<?php
+require_once 'MB_base.php';
+
+class MB_urls extends MB_base{
+	protected $config;
+	protected $model;
+	protected $load_cache=array();
+	protected $store_cache=array();
+	protected $content_cache=array();
+	protected $status_cache=array();
+	
+	public function __construct(){
+		parent::__construct();
+	}
+	
+	public function load(){
+		$urls=$this->model->getNoFinishUrls($this->config["cache_count"]);
+		if($urls){
+			foreach ($urls as $url){
+				array_push($this->load_cache, $url->url);
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public function getOneUrl(){
+		if($this->load_cache){
+			return array_pop($this->load_cache);
+		}
+		return false;
+	}
+	
+	public function addStartUrl($url){
+		array_push($this->load_cache, $url);
+	}
+	
+	public function setContentOfUrl($url,$content){
+		$url_id=md5($url);
+		$this->content_cache[$url_id]=$content;
+	}
+	
+	public function setFinishOfUrl($url){
+		$url_id=md5($url);
+		$this->status_cache[$url_id]=2;
+	}
+	
+	public function addUrl($url){
+		$url_id=md5($url);
+		$this->store_cache[$url_id]=$url;
+	}
+	
+	public function store(){
+		if(count($this->store_cache)>0){
+			$store_urls=$this->model->getUrlByUrlIds(array_keys($this->store_cache));
+			if($store_urls){
+				foreach ($store_urls as $url){
+					unset($this->store_cache[$url->url_id]);
+				}
+			}
+			if(count($this->store_cache)>0){
+				$this->model->addUrls($this->store_cache);
+			}
+			$this->store_cache=array();
+		}
+		if(count($this->content_cache)>0){
+			$this->model->setContents(array_keys($this->content_cache),array_values($this->content_cache));
+			$this->content_cache=array();
+		}
+		if(count($this->status_cache)>0){
+			$this->model->setStatuses(array_keys($this->status_cache),array_values($this->status_cache));
+			$this->status_cache=array();
+		}
+	}
+	
+	public function setConfig(&$config){
+		$this->config=$config;
+	}
+	
+	public function serialize(){
+		return serialize(array($this->load_cache,$this->store_cache,$this->content_cache,$this->status_cache));
+	}
+	
+	public function unserialize($str){
+		$s=unserialize($str);
+		$this->load_cache=$s[0];
+		$this->store_cache=$s[1];
+		$this->content_cache=$s[2];
+		$this->status_cache=$s[3];
+	}
+}

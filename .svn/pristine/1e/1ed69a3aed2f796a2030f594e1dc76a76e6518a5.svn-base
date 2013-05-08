@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>北化人微信公众平台</title>
+    <link style="text/css" rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <link style="text/css" rel="stylesheet" href="/static/css/bootstrap-responsive.min.css" />
+    <link style="text/css" rel="stylesheet" href="/static/css/weibucter.css" />
+</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+    	<div class="navbar-inner">
+        	<div class="container">
+    			<div class="nav-collapse">
+        			<ul class="nav">
+            			<li><a href="#">介绍</a></li>
+            		</ul>
+        		</div>
+        	</div>
+    	</div>
+    </div>
+    
+    <header class="container banner">
+    </header>
+    
+	<article class="container">
+        <h1>北化人微信公众平台使用说明</h1>
+		<div class="row">
+			<section class="span9">
+            	<div>
+               		北化人致力于打造北化人自己的微信公共平台，欢迎大家参与!
+                </div>
+                <div class="row">
+                	<h2></h2>
+                </div>
+                <div class="row">
+                	<h2></h2>
+                </div>
+    		</section>
+    		<aside class="span3">
+    			<img src="/static/img/qrcode.jpg" class="img-rounded">
+    		</aside>
+		</div>
+   	</article>
+    
+</body>
+<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+</html>

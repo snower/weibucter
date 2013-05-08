@@ -1,0 +1,16 @@
+<?php
+require_once APPPATH."libraries/bucter/BT_topic.php";
+
+class TO_hynh extends BT_topic{
+	public function getReply(){
+		$this->msg["MsgType"]="news";
+		$this->msg["Content"]=array(
+				array("Title"=>"花样年华","Description"=>"花样年华学生社区","PicUrl"=>"http://a.hiphotos.baidu.com/album/w%3D2048/sign=925652780dd79123e0e09374990c5882/cf1b9d16fdfaaf51ab0883cf8d5494eef11f7ad2.jpg","Url"=>"http://www.student.buct.edu.cn/")
+		);
+		$this->msg["ArticleCount"]=1;
+	}
+	
+	public function saveTopic(){
+		return false;
+	}
+}

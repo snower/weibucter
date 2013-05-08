@@ -1,0 +1,14 @@
+<?php
+
+function getTopicsConfig(){
+	$BT_topics_config=array();
+
+	$BT_topics_config["菜单"]=array(
+		"TO_menu"
+	);
+	$BT_topics_config["花样年华"]=array(
+		"TO_hynh"
+	);
+	
+	return $BT_topics_config;
+}

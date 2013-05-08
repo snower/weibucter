@@ -1,0 +1,40 @@
+<?php
+require_once APPPATH."libraries/datafinder/DF_finder.php";
+
+class FD_jiaowu extends DF_finder{
+	protected $name="jiaowu";
+	
+	private function getPageSource(){
+		$f = new SaeFetchurl();
+		return $f->fetch('http://www.jiaowu.buct.edu.cn/Index.asp');
+	}
+	
+	private function parseLatestPosts(){
+		$content=$this->getPageSource();
+		$posts=array();
+		$reg="/<img src=\"NewsSys\/image\/skin\/1\/bullet.gif\" width=\"20\" height=\"22\" align=absmiddle><a href=\"newssys\/.*?<\/a>/ims";
+		$items=array();
+		if(preg_match_all($reg,$content,$items)){
+			$items=$items[0];
+			foreach ($items as $i){
+				$is=array();
+				$reg="/^.*?href=\"(.+?)\".*?>(.+?)<.*?$/ims";
+				if(preg_match($reg,$i,$is)){
+					$is[2]=str_replace("“", "\"", $is[2]);
+					$posts[]=array($is[1],$is[2]);
+				}
+			}
+		}
+		var_dump($posts);
+		echo "\n";
+		echo serialize($posts);
+		return $posts;
+	}
+	
+	public function finder(){
+		$this->data=$this->parseLatestPosts();
+		if($this->data){
+			$this->saveData();
+		}
+	}
+}

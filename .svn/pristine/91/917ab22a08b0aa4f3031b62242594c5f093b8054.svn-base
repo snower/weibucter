@@ -1,0 +1,89 @@
+<?php
+require_once 'MB_base.php';
+
+class MB_context extends MB_base{
+	private $config;
+	private $urls;
+	private $data;
+	private $parse;
+	
+	public function __construct($config){
+		parent::__construct();
+		$this->config=$config;
+		$this->loadUrls();
+		$this->loadData();
+		$this->loadParse();
+		
+		$this->urls->setConfig($this->config);
+		
+		$this->data->setConfig($this->config);
+		
+		$this->parse->setConfig($this->config);
+		$this->parse->setData($this->data);
+		$this->parse->setUrls($this->urls);
+	}
+	
+	private function loadUrls(){
+		require_once APPPATH."libraries/mibot/urls/".$this->config["urls"].".php";
+		$this->urls=new $this->config["urls"]();
+	}
+	
+	private function loadData(){
+		require_once APPPATH."libraries/mibot/data/".$this->config["data"].".php";
+		$this->data=new $this->config["data"]();
+	}
+	
+	private function loadParse(){
+		require_once APPPATH."libraries/mibot/parse/".$this->config["parse"].".php";
+		$this->parse=new $this->config["parse"]();
+	}
+	
+	public static function initContext($config){
+		$context=new MB_context($config);
+		foreach ($config["start_urls"] as $url){
+			$context->getUrls()->addStartUrl($url);
+		}
+		return $context; 
+	}
+	
+	public static function loadContext($context_id){
+		$kv = new SaeKV();
+    	$kv->init();
+    	$data=$kv->get($context_id);
+    	if(!$data) return null;
+		$c=unserialize($data);
+		$context=new MB_context($c["config"]);
+		$context->getUrls()->unserialize($c["urls"]);
+		$context->getData()->unserialize($c["data"]);
+		$context->getParse()->unserialize($c["parse"]);
+		return $context;
+	}
+	
+	public function saveContext(){
+		$str=serialize(array("config"=>$this->config,
+				"urls"=>$this->urls->serialize(),
+				"data"=>$this->data->serialize(),
+				"parse"=>$this->parse->serialize()));
+		$context_id=md5($str);
+		$kv = new SaeKV();
+    	$kv->init();
+    	$kv->set($context_id,$str);
+		return $context_id;
+	}
+	
+	public function getConfig(){
+		return $this->config;
+	}
+	
+	public function getUrls(){
+		return $this->urls;
+	}
+	
+	public function getData(){
+		return $this->data;
+	}
+	
+	public function getParse(){
+		return $this->parse;
+	}
+}
